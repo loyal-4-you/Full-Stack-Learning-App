@@ -1,0 +1,62 @@
+
+<section>
+  <div class="mb-8 flex justify-center border-b border-gray-700/60">
+    <button (click)="activeTab.set('paths')" 
+            [class]="'px-6 py-3 text-lg font-medium transition-colors focus:outline-none ' + (activeTab() === 'paths' ? 'text-teal-400 border-b-2 border-teal-400' : 'text-gray-400 hover:text-white')">
+      Learning Paths
+    </button>
+    <button (click)="activeTab.set('skills')" 
+            [class]="'px-6 py-3 text-lg font-medium transition-colors focus:outline-none ' + (activeTab() === 'skills' ? 'text-teal-400 border-b-2 border-teal-400' : 'text-gray-400 hover:text-white')">
+      All Skills
+    </button>
+  </div>
+
+  @if (activeTab() === 'paths') {
+    <div class="animate-fade-in">
+      <h2 class="text-3xl font-bold text-gray-200 mb-2 text-center">Guided Learning Paths</h2>
+      <p class="text-center text-gray-400 mb-8">Follow a structured curriculum to build your skills from the ground up.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (path of learningPaths; track path.name) {
+          <button (click)="selectPath(path)" class="group bg-slate-800/50 backdrop-blur-lg rounded-xl p-6 text-left border border-slate-700/50 hover:border-teal-400/60 transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-teal-500 overflow-hidden relative flex flex-col h-full">
+            <div [class]="'absolute top-0 left-0 h-1.5 w-full bg-gradient-to-r ' + path.color"></div>
+            <h3 class="text-xl font-bold text-white mb-2">{{ path.name }}</h3>
+            <p class="text-gray-400 flex-grow text-sm leading-relaxed">{{ path.description }}</p>
+            <div class="mt-4 flex flex-wrap gap-2 pt-4 border-t border-slate-700/50">
+                @for (skillName of path.skillNames.slice(0, 5); track skillName) {
+                    <span class="text-xs font-medium bg-gray-700/80 text-gray-300 px-2 py-1 rounded-full">{{ skillName }}</span>
+                }
+                 @if (path.skillNames.length > 5) {
+                    <span class="text-xs font-medium bg-gray-700/80 text-gray-300 px-2 py-1 rounded-full">+{{ path.skillNames.length - 5 }} more</span>
+                 }
+            </div>
+          </button>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="animate-fade-in">
+      <h2 class="text-3xl font-bold text-gray-200 mb-2 text-center">Explore All Skills</h2>
+      <p class="text-center text-gray-400 mb-8">Choose any technology and dive deep into its concepts and practices.</p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+        @for (skill of skills; track skill.name) {
+          <button 
+            (click)="selectSkill(skill)"
+            class="group relative aspect-square bg-slate-800/50 backdrop-blur-lg rounded-xl p-4 flex flex-col justify-center items-center text-center border border-slate-700/50 hover:border-teal-400/60 transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-teal-500 overflow-hidden">
+            
+            <div class="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 opacity-50 group-hover:opacity-75 transition-opacity"></div>
+            
+            <div class="relative z-10 flex flex-col items-center">
+                <svg [class]="'w-12 h-12 mb-3 ' + skill.color" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path [attr.d]="skill.logo"></path>
+                </svg>
+                <h3 class="font-semibold text-white text-sm md:text-base">{{ skill.name }}</h3>
+                <p class="text-xs text-gray-400 mt-1">{{ skill.category }}</p>
+            </div>
+            
+            <div [class]="'absolute -bottom-12 -right-12 w-24 h-24 blur-2xl opacity-10 group-hover:opacity-25 transition-opacity duration-500 ' + skill.color.replace('text', 'bg').replace('-400', '-500')"></div>
+          </button>
+        }
+      </div>
+    </div>
+  }
+</section>

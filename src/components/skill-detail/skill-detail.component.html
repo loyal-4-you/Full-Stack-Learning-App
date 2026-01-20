@@ -1,0 +1,388 @@
+<div class="max-w-6xl mx-auto animate-fade-in-up">
+  <div class="mb-8">
+    <button (click)="back.emit()"
+      class="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors duration-200">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd"
+          d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+          clip-rule="evenodd" />
+      </svg>
+      <span>Back to Dashboard</span>
+    </button>
+  </div>
+
+  <header
+    class="flex items-center space-x-6 mb-8 p-6 bg-slate-800/50 backdrop-blur-lg border border-slate-700/50 rounded-xl">
+    <svg [class]="'w-20 h-20 flex-shrink-0 ' + skill().color" fill="currentColor" viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg">
+      <path [attr.d]="skill().logo"></path>
+    </svg>
+    <div>
+      <h2 class="text-4xl font-extrabold text-white">{{ skill().name }}</h2>
+      <p class="text-lg text-gray-300">{{ skill().category }}</p>
+    </div>
+  </header>
+
+  <!-- Tabs Navigation -->
+  <div class="mb-8 border-b border-gray-700/60 flex">
+    <button (click)="activeTab.set('overview')"
+      [class]="'px-6 py-3 text-base font-medium transition-colors focus:outline-none ' + (activeTab() === 'overview' ? 'text-teal-400 border-b-2 border-teal-400' : 'text-gray-400 hover:text-white')">
+      Overview
+    </button>
+    <button (click)="activeTab.set('practice')"
+      [class]="'px-6 py-3 text-base font-medium transition-colors focus:outline-none ' + (activeTab() === 'practice' ? 'text-teal-400 border-b-2 border-teal-400' : 'text-gray-400 hover:text-white')">
+      Practice
+    </button>
+    <button (click)="activeTab.set('resources')"
+      [class]="'px-6 py-3 text-base font-medium transition-colors focus:outline-none ' + (activeTab() === 'resources' ? 'text-teal-400 border-b-2 border-teal-400' : 'text-gray-400 hover:text-white')">
+      All Resources
+    </button>
+  </div>
+
+
+  <div class="space-y-8">
+    <!-- Overview Tab Content -->
+    @if (activeTab() === 'overview') {
+    <!-- Key Concept Section -->
+    <div class="bg-slate-800/50 backdrop-blur-lg border border-slate-700/50 rounded-xl p-6">
+      <h3 class="text-xl font-bold mb-4 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-yellow-400" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        </svg>
+        Key Concept
+      </h3>
+      @if (loadingType() === 'explanation') {
+      <div class="flex justify-center items-center p-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-400"></div>
+      </div>
+      } @else {
+      @if (explanation()) {
+      <app-markdown [content]="explanation()"></app-markdown>
+      } @else {
+      <p class="text-gray-500 italic">Click the button to generate an explanation from Gemini.</p>
+      }
+      }
+      @if (!explanation()) {
+      <button (click)="getExplanation()" [disabled]="loadingType() !== null"
+        class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-700 disabled:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 focus:ring-offset-gray-900 transition">
+        Generate Explanation
+      </button>
+      }
+    </div>
+
+    <!-- Code Example Section -->
+    <div class="bg-slate-800/50 backdrop-blur-lg border border-slate-700/50 rounded-xl p-6">
+      <h3 class="text-xl font-bold mb-4 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-sky-400" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+        </svg>
+        Code Example
+      </h3>
+      @if (loadingType() === 'code') {
+      <div class="flex justify-center items-center p-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-400"></div>
+      </div>
+      } @else {
+      @if (codeExample()) {
+      <div class="bg-gray-900/70 rounded-md">
+        <app-markdown [content]="codeExample()"></app-markdown>
+      </div>
+      } @else {
+      <p class="text-gray-500 italic">Click the button to generate a code example from Gemini.</p>
+      }
+      }
+      @if(!codeExample()){
+      <button (click)="getCodeExample()" [disabled]="loadingType() !== null"
+        class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-sky-600 hover:bg-sky-700 disabled:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 focus:ring-offset-gray-900 transition">
+        Generate Example
+      </button>
+      }
+    </div>
+    }
+
+    <!-- Practice Tab Content -->
+    @if (activeTab() === 'practice') {
+    <!-- Practice Playground Section -->
+    <div class="bg-slate-800/50 backdrop-blur-lg border border-slate-700/50 rounded-xl p-6">
+      <h3 class="text-xl font-bold mb-4 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-amber-400" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+        </svg>
+        Practice Playground
+      </h3>
+      @if (loadingType() === 'practice') {
+      <div class="flex justify-center items-center p-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-400"></div>
+      </div>
+      } @else {
+      @if (practiceProblem()) {
+      <div class="space-y-4">
+        <div class="bg-gray-900/50 rounded-md p-4 border border-slate-700">
+          <h4 class="text-sm font-semibold text-teal-300 mb-2 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            Challenge
+          </h4>
+          <app-markdown [content]="practiceProblem()"></app-markdown>
+        </div>
+
+        <div class="border border-slate-700 rounded-md overflow-hidden">
+          <div class="bg-slate-800/50 px-4 py-2 flex items-center justify-between">
+            <span class="text-sm font-medium text-gray-300 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-sky-400" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+              </svg>
+              Your Code
+            </span>
+          </div>
+          <app-code-editor (codeChange)="userCode.set($event)"></app-code-editor>
+        </div>
+
+        <div class="flex gap-2 flex-wrap">
+          <button (click)="validateCode()" [disabled]="loadingType() !== null || !userCode()"
+            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-sky-600 hover:bg-sky-700 disabled:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 focus:ring-offset-gray-900 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Check Code
+          </button>
+
+          <button (click)="getCodeFeedback()" [disabled]="loadingType() !== null || !userCode()"
+            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-600 hover:bg-amber-700 disabled:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 focus:ring-offset-gray-900 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+            </svg>
+            Get Detailed Feedback
+          </button>
+        </div>
+
+        @if(loadingType() === 'feedback') {
+        <div class="flex justify-center items-center p-8">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-400"></div>
+        </div>
+        } @else {
+        @if (codeValidation()) {
+        <div class="mt-4 bg-sky-900/20 border border-sky-700/50 rounded-md p-4">
+          <h5 class="text-sm font-semibold text-sky-300 mb-2 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Quick Validation
+          </h5>
+          <app-markdown [content]="codeValidation()"></app-markdown>
+        </div>
+        }
+
+        @if (codeFeedback()) {
+        <div class="mt-4 bg-gray-900/70 rounded-md p-4 border border-amber-700/50">
+          <h5 class="text-sm font-semibold text-amber-300 mb-2 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+            </svg>
+            Detailed Feedback
+          </h5>
+          <app-markdown [content]="codeFeedback()"></app-markdown>
+        </div>
+        }
+        }
+      </div>
+      } @else {
+      <p class="text-gray-500 italic">Click the button to generate a practice problem from Gemini.</p>
+      }
+      }
+      @if(!practiceProblem()) {
+      <button (click)="getPracticeProblem()" [disabled]="loadingType() !== null"
+        class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-600 hover:bg-amber-700 disabled:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 focus:ring-offset-gray-900 transition">
+        Generate Problem
+      </button>
+      }
+    </div>
+    <!-- Quiz Section -->
+    <div class="bg-slate-800/50 backdrop-blur-lg border border-slate-700/50 rounded-xl p-6">
+      <h3 class="text-xl font-bold mb-4 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-purple-400" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Test Your Knowledge
+      </h3>
+      @if (loadingType() === 'quiz') {
+      <div class="flex justify-center items-center p-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-400"></div>
+      </div>
+      } @else {
+      @if (quiz(); as q) {
+      <div class="space-y-4">
+        <p class="text-gray-200 text-lg">{{ q.question }}</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          @for (option of q.options; track option) {
+          <button (click)="selectOption(option)" [disabled]="showAnswer()"
+            [class]="'w-full p-3 text-left rounded-md border transition-all duration-200 ' + getOptionClass(option)">
+            {{ option }}
+          </button>
+          }
+        </div>
+        @if (selectedOption() && !showAnswer()) {
+        <button (click)="showAnswer.set(true)"
+          class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 disabled:bg-gray-500 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 focus:ring-offset-gray-900 transition">
+          Check Answer
+        </button>
+        }
+        @if (showAnswer()) {
+        <button (click)="getQuiz()" [disabled]="loadingType() !== null"
+          class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 disabled:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 focus:ring-offset-gray-900 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+          Next Question
+        </button>
+        }
+      </div>
+      } @else {
+      <p class="text-gray-500 italic">Click the button to generate a quiz question from Gemini.</p>
+      }
+      }
+      @if(!quiz()) {
+      <button (click)="getQuiz()" [disabled]="loadingType() !== null"
+        class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 disabled:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 focus:ring-offset-gray-900 transition">
+        Generate Quiz
+      </button>
+      }
+      @if (error()) {
+      <p class="text-red-400 mt-4">{{ error() }}</p>
+      }
+    </div>
+    }
+
+    <!-- Resources Tab Content -->
+    @if (activeTab() === 'resources') {
+    <div class="bg-slate-800/50 backdrop-blur-lg border border-slate-700/50 rounded-xl">
+      <div class="p-6 border-b border-slate-700/50">
+        <h3 class="text-xl font-bold flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-lime-400" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+          AI-Generated Curriculum
+        </h3>
+      </div>
+
+      @if (loadingType() === 'topics') {
+      <div class="flex justify-center items-center p-8 min-h-[400px]">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-lime-400"></div>
+      </div>
+      } @else {
+      @if (resourceTopics().length > 0) {
+      <div class="space-y-4 p-4 sm:p-6">
+        @for (category of resourceTopics(); track category.category) {
+        <div class="bg-slate-900/40 rounded-lg border border-slate-700/50 overflow-hidden">
+          <div class="px-6 py-4 bg-slate-800/50">
+            <h4 class="text-lg font-bold text-teal-300 tracking-wide">{{ category.category }}</h4>
+          </div>
+          <div class="divide-y divide-slate-700/50">
+            @for(topic of category.topics; track topic; let topicIdx = $index) {
+            <div>
+              <button (click)="selectTopic(topic)"
+                class="w-full p-4 md:p-6 text-left flex justify-between items-center transition-colors group hover:bg-slate-800 focus:outline-none">
+                <div class="flex items-center">
+                  <span class="mr-4 text-slate-400 font-mono text-sm">{{ topicIdx + 1 }}.</span>
+                  <span class="text-base text-gray-200 group-hover:text-white">{{ topic }}</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg"
+                  [class]="'h-6 w-6 text-gray-400 transition-transform duration-300 ' + (selectedTopic() === topic ? 'rotate-180' : '')"
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              @if (selectedTopic() === topic) {
+              <div class="bg-slate-900/70 border-t border-slate-700/50">
+                <div class="p-6 md:p-8 overflow-x-auto">
+                  @if (loadingType() === 'topicDetail') {
+                  <div class="flex justify-center items-center h-48">
+                    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-400"></div>
+                  </div>
+                  } @else if (topicDetails(); as details) {
+                  <div class="space-y-8 pt-2 max-w-full overflow-hidden">
+                    <app-markdown [content]="details.explanation"></app-markdown>
+                    <app-markdown [content]="details.codeExample"></app-markdown>
+
+                    @if (details.quiz; as topicQuiz) {
+                    <div class="p-5 border border-slate-700 rounded-lg bg-slate-800/60 mt-8">
+                      <h4
+                        class="text-base font-bold text-teal-300 mb-4 pb-3 border-b border-slate-600 flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                          stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Check Your Understanding
+                      </h4>
+                      <div class="space-y-3 mt-4">
+                        <p class="text-gray-200">{{ topicQuiz.question }}</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          @for (option of topicQuiz.options; track option) {
+                          <button (click)="selectTopicQuizOption(option)" [disabled]="topicQuizShowAnswer()"
+                            [class]="'w-full p-2.5 text-left text-sm rounded-md border transition-all duration-200 ' + getTopicQuizOptionClass(option)">
+                            {{ option }}
+                          </button>
+                          }
+                        </div>
+                        @if (topicQuizSelectedOption() && !topicQuizShowAnswer()) {
+                        <button (click)="topicQuizShowAnswer.set(true)"
+                          class="mt-2 inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 disabled:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 focus:ring-offset-gray-900 transition">
+                          Check Answer
+                        </button>
+                        }
+                      </div>
+                    </div>
+                    }
+                  </div>
+                  } @else {
+                  <p class="text-gray-500 pt-4 text-center">Could not load details for this topic. Please try again.</p>
+                  }
+                </div>
+              </div>
+              }
+            </div>
+            }
+          </div>
+        </div>
+        }
+      </div>
+      } @else {
+      <div class="p-6">
+        <p class="text-gray-500 italic">Generate a comprehensive, AI-powered curriculum for {{ skill().name }}.</p>
+        <button (click)="getResourceTopics()" [disabled]="loadingType() !== null"
+          class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-lime-600 hover:bg-lime-700 disabled:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime-500 focus:ring-offset-gray-900 transition">
+          Generate Full Curriculum
+        </button>
+      </div>
+      }
+      }
+    </div>
+    }
+  </div>
+</div>
